@@ -117,7 +117,7 @@ def callApi():
 	if not os.path.isfile(fileName):
 		url = "https://ctsearch.entrust.com/api/v1/certificates?fields=issuerCN,subjectO,issuerDN,issuerO,subjectDN,signAlg,san,publicKeyType,publicKeySize,validFrom,validTo,sn,ev,logEntries.logName,subjectCNReversed,cert&domain="+domain+"&includeExpired=false&exactMatch=false&limit=5000"
     		
-    		#if running code bendind a proxy please use the line below
+    		#if running code behind a proxy please use the line below
     		#response = requests.get(url,proxies={"https":"PROXY_NAME:PORT"})
     		response = requests.get(url)
 		with open(fileName, 'w') as f:
