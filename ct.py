@@ -3,6 +3,7 @@ import os.path
 import json
 import sys
 
+#print things on command line
 def printReport(number,title,message):
         print '\n'
         print '######################################################################'
@@ -10,6 +11,7 @@ def printReport(number,title,message):
         print '######################################################################'
         print message
 
+#parsing json data
 def refineData(jsonKey):
 	tempArray = {}
 
@@ -33,7 +35,8 @@ def newLine(listVal):
 		listStr += i+"\n"
 	
 	return listStr
-	
+
+#list of all the domains found in Subject Alternative Name field	
 def uniqueDomains():
 	san = []
 	domainName = domain.split('.')
@@ -47,6 +50,7 @@ def uniqueDomains():
 	
 	printReport(7,'List of unique domain names found',message)
 
+#organizational units which generated the certficate
 def commonName():
 	cn = []
 	ou = []
@@ -69,16 +73,19 @@ def commonName():
 	messageCN = "Certificates were found where "+domain+" domain is in Subject Alternative Name (SAN) but the CN is a different domain \n"+cnStr
 	printReport(5,'Common Name (cn) without '+domain ,messageCN)
 
-	printReport(6,'Organizational Units which  created the certificates',ouStr)
-	
+	printReport(6,'Organizational Units which created the certificates',ouStr)
+
+#list of CA's that issued certificates	
 def certificateAuthority():
         message = refineData("issuerO")
         printReport(4, 'Number of certificates issued by each CA',message)
 
+#analyze signature algorithm used in certs
 def signAlg():	
 	message = refineData("signAlg")
 	printReport(3,'Signature Algorithm used in certificates',message)
 
+#analyze the public key size and type
 def keySizeAndType():
 	keyTypeStr = refineData("publicKeyType") 
 	keySizeStr = refineData("publicKeySize")	
@@ -86,8 +93,9 @@ def keySizeAndType():
 	message = "Public keyType analysis (keyType -> number of certificates using keyType) \n"+keyTypeStr
 	message += "Public keySize analysis (keySize -> number of certificates using keySize) \n"+keySizeStr
 	
-	printReport(2,'Key Type and Size', message)
+	printReport(2,'Key Type and Size',message)
 
+#total number of certs found in the log
 def totalCerts():
 	counter = 0
         
@@ -105,9 +113,13 @@ def callApi():
 	fileName = domain.split('.')
 	fileName = fileName[0]+".json"
 
+	#if the file exsits don't query the endpoint 
 	if not os.path.isfile(fileName):
 		url = "https://ctsearch.entrust.com/api/v1/certificates?fields=issuerCN,subjectO,issuerDN,issuerO,subjectDN,signAlg,san,publicKeyType,publicKeySize,validFrom,validTo,sn,ev,logEntries.logName,subjectCNReversed,cert&domain="+domain+"&includeExpired=false&exactMatch=false&limit=5000"
-    		response = requests.get(url,proxies={"https":"http://www-proxy.us.oracle.com:80"})
+    		
+    		#if running code bendind a proxy please use the line below
+    		#response = requests.get(url,proxies={"https":"PROXY_NAME:PORT"})
+    		response = requests.get(url)
 		with open(fileName, 'w') as f:
     			f.write(response.content)
 
