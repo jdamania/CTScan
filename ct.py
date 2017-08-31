@@ -113,7 +113,7 @@ def callApi():
 	fileName = domain.split('.')
 	fileName = fileName[0]+".json"
 
-	#if the file exsits don't query the endpoint 
+	#if the file exists don't query the endpoint 
 	if not os.path.isfile(fileName):
 		url = "https://ctsearch.entrust.com/api/v1/certificates?fields=issuerCN,subjectO,issuerDN,issuerO,subjectDN,signAlg,san,publicKeyType,publicKeySize,validFrom,validTo,sn,ev,logEntries.logName,subjectCNReversed,cert&domain="+domain+"&includeExpired=false&exactMatch=false&limit=5000"
     		
